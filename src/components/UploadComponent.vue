@@ -20,13 +20,11 @@
       </label>
     </div>
 
-    <!-- File Preview -->
     <div v-if="file" class="mb-4 p-4 border border-lightBorder rounded-md bg-gray-50">
       <p><strong>File Name:</strong> {{ file.name }}</p>
       <p><strong>Size:</strong> {{ (file.size / 1024).toFixed(2) }} KB</p>
     </div>
 
-    <!-- Upload Button -->
     <button
       class="w-full btn"
       :class="{ 'bg-gray-300 cursor-not-allowed': !file || isUploading }"
@@ -37,7 +35,6 @@
       <span v-else>Uploading... {{ progress }}%</span>
     </button>
 
-    <!-- Status Message -->
     <p v-if="message" class="mt-4 text-center" :class="{ 'text-green-500': success, 'text-red-500': !success }">
       {{ message }}
     </p>
@@ -79,21 +76,24 @@ export default {
       const formData = new FormData();
       formData.append("file", file.value);
 
+      const url = `http://localhost:5000/api/upload`;  
+      console.log("The URL:", url);
+
       try {
         isUploading.value = true;
-        const response = await axios.post("/api/upload", formData, {
+        const response = await axios.post(url, formData, {
           onUploadProgress: (event) => {
             if (event.total) {
               progress.value = Math.round((event.loaded / event.total) * 100);
             }
           },
-
         });
+
         console.log(response);
         message.value = "File uploaded successfully!";
         success.value = true;
       } catch (error) {
-        console.error(error);
+        console.error(error);  
         message.value = "Upload failed. Please try again.";
         success.value = false;
       } finally {
@@ -115,3 +115,5 @@ export default {
   },
 };
 </script>
+
+
